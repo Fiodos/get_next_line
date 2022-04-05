@@ -10,22 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
-// The function really only need to return one line at a time
-// If nothing to read or error occured, return NULL;
-// Should be able to read from file + standard input
-// The returned line should incluude the terminating null char
-// except the end of line is reached, and it does not end with \n
-
-// Try it out with read to a char. Then if char != '\n', say buffer (which will be an array with buffer size)
-// buff[i] = c. If c == '\n' break. Then get len of buffer. Allocate the memory to a ptr. Copy buff
-// content into ptr and return it.
-
+/*
+1) Try to figure out why the tester K.O you seemingly random
+2) You need to find a way around the hardcoded char buffer, in order to be able to store
+greater input
+3) Try to find a way to work with increased buffer sizes
+*/
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include "get_next_line.h"
+#if BUFFER_SIZE
+#endif
 int	ft_strlen(char *str)
 {
 	int	i;
@@ -36,50 +33,72 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
+int	get_file_size(fd)
+{
+	int size;
+	int c;
+
+	size = 0;
+	c = 0;
+	while (read(fd, &c, 1))
+		size++;
+	return (size);
+}
+
 char	*get_next_line(int fd)
 {
-	char	buff[100];
+	char	buff[BUFFER_SIZE];
 	char	*result;
-	int		c;
+	char	c;
 	int		i;
+	int		control;
 
 	i = 0;
 	c = 0;
-	read(fd, &c, 1);
-	if (c == 0)
+	control = read(fd, &c, 1);
+	if (control <= 0)
 		return (0);
-	while (i < 100)
+	while (control && c != '\n')
 	{
-		if (c == '\n')
-			break;
-		if (c == (-1))
-			break;
 		buff[i] = c;
-		read(fd, &c, 1);
 		i++;
+		control = read(fd, &c, 1);
 	}
 	buff[i] = '\0';
-	result = malloc(sizeof(char) * ft_strlen(buff));
+	result = malloc(sizeof(char) * (ft_strlen(buff) + 1));
 	i = 0;
 	while (buff[i])
 	{
 		result[i] = buff[i];
 		i++;
 	}
-	if (c == (-1))
+	if (control <= 0)
+	{
 		result[i] = '\0';
-	else
-		result[i] = '\n';
+		return (result);
+	}
+	result[i] = '\n';
 	return (result);
 }
 
-// #include <string.h>
-// int main()
-// {
-// 	FILE *ptr = fopen("test2.txt", "r");
-// 	int fd = fileno(ptr);
-// 	char buff[100];
-// 	// printf("%s", get_next_line(fd));
-// 	// printf("%s", get_next_line(fd));
-// 	return (0);
-// }
+#include <string.h>
+int main()
+{
+	FILE *ptr = fopen("test5.txt", "r");
+	int fd = fileno(ptr);
+	// char *buff;
+	// buff = malloc(sizeof(char) * 10000);
+	// printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
+	// read(fd, buff, 100000);
+	// printf("%s\n", buff);
+	// printf("%s", get_next_line(fd));
+	// printf("%s", get_next_line(fd));
+	printf("%d\n", get_file_size(fd));
+	printf("%s", get_next_line(fd));
+	return (0);
+}
