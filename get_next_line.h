@@ -6,7 +6,7 @@
 /*   By: fyuzhyk <fyuzhyk@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/04 17:42:14 by fyuzhyk           #+#    #+#             */
-/*   Updated: 2022/04/07 09:58:28 by fyuzhyk          ###   ########.fr       */
+/*   Updated: 2022/04/08 16:49:49 by fyuzhyk          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,4 +23,6 @@ size_t	ft_strlen(const char *s);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 
 char	*ft_realloc(char *ptr, int len);
+
+void	*ft_calloc(size_t count, size_t size);
 #endif
