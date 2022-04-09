@@ -6,7 +6,7 @@
 /*   By: fyuzhyk <fyuzhyk@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 09:56:33 by fyuzhyk           #+#    #+#             */
-/*   Updated: 2022/04/08 16:49:39 by fyuzhyk          ###   ########.fr       */
+/*   Updated: 2022/04/09 20:29:34 by fyuzhyk          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,19 +54,30 @@ char	*ft_realloc(char *ptr, int len)
 	return (result);
 }
 
-void	*ft_calloc(size_t count, size_t size)
+char	*get_result(int fd, int j, char *buffer, char *result)
 {
-	unsigned int	i;
-	unsigned char	*ptr;
+	static int	i;
+	static int	control;
 
-	i = 0;
-	ptr = malloc(count * size);
-	if (ptr == NULL)
-		return (0);
-	while (i < count * size)
+	if (control <= i)
 	{
-		ptr[i] = '\0';
-		i++;
+		control = read(fd, buffer, BUFFER_SIZE);
+		i = 0;
 	}
-	return (ptr);
+	if (control <= 0)
+		return (NULL);
+	while (buffer[i] != '\n' && i < control && control != 0)
+	{
+		result[j++] = buffer[i++];
+		if (control == i)
+		{
+			result = ft_realloc(result, ft_strlen(result) + BUFFER_SIZE * 10);
+			control = read(fd, buffer, BUFFER_SIZE);
+			i = 0;
+		}
+	}
+	if (buffer[i++] == '\n' && control != 0)
+		result[j++] = '\n';
+	result[j] = '\0';
+	return (result);
 }
