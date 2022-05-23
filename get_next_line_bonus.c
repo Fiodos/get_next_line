@@ -16,25 +16,27 @@
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer[1024];
 	char		*next_line;
 	char		*result;
 	int			j;
 
 	j = 0;
+	if (fd < 0 || fd > 1024)
+		return (NULL);
 	result = malloc(BUFFER_SIZE + 1);
 	if (result == NULL)
 		return (NULL);
-	if (buffer == NULL)
-		buffer = malloc(BUFFER_SIZE + 1);
-	if (buffer == NULL)
+	if (buffer[fd] == NULL)
+		buffer[fd] = malloc(BUFFER_SIZE + 1);
+	if (buffer[fd] == NULL)
 		return (NULL);
-	next_line = get_result(fd, j, buffer, result);
+	next_line = get_result(fd, j, buffer[fd], result);
 	if (next_line == NULL)
 	{
-		free(buffer);
+		free(buffer[fd]);
 		free(result);
-		buffer = NULL;
+		buffer[fd] = NULL;
 		result = NULL;
 	}
 	return (next_line);

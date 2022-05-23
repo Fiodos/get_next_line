@@ -56,27 +56,27 @@ char	*ft_realloc(char *ptr, int len)
 
 char	*get_result(int fd, int j, char *buffer, char *result)
 {
-	static int	i;
-	static int	control;
+	static int	i[1024];
+	static int	control[1024];
 
-	if (control <= i)
+	if (control[fd] <= i[fd])
 	{
-		control = read(fd, buffer, BUFFER_SIZE);
-		i = 0;
+		control[fd] = read(fd, buffer, BUFFER_SIZE);
+		i[fd] = 0;
 	}
-	if (control <= 0)
+	if (control[fd] <= 0)
 		return (NULL);
-	while (buffer[i] != '\n' && i < control && control != 0)
+	while (buffer[i[fd]] != '\n' && i[fd] < control[fd] && control[fd] != 0)
 	{
-		result[j++] = buffer[i++];
-		if (control == i)
+		result[j++] = buffer[i[fd]++];
+		if (control[fd] == i[fd])
 		{
 			result = ft_realloc(result, ft_strlen(result) + BUFFER_SIZE);
-			control = read(fd, buffer, BUFFER_SIZE);
-			i = 0;
+			control[fd] = read(fd, buffer, BUFFER_SIZE);
+			i[fd] = 0;
 		}
 	}
-	if (buffer[i++] == '\n' && control != 0)
+	if (buffer[i[fd]++] == '\n' && control[fd] != 0)
 		result[j++] = '\n';
 	result[j] = '\0';
 	return (result);
